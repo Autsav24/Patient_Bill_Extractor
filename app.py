@@ -31,20 +31,36 @@ if uploaded_files:
         image = Image.open(file)
 
         prompt = """
-        Extract patient data from the image as a JSON array.
-        Each object must have these fields:
-        - Date
-        - Name
-        - Age
-        - Mobile No
-        - Amount
+            Analyze the following handwritten patient register image carefully.
+            
+            Your task is to extract structured data as a valid JSON array.
+            
+            Step 1: Read and recognize all visible words or numbers.
+            Step 2: Match each recognized value to one of these fields:
+            - Date
+            - Name
+            - Age
+            - Mobile No
+            - Amount
+            Step 3: If any field is blank or unreadable, use "NA".
+            Step 4: Fix common OCR mistakes:
+            - Replace "Sanjana" with "Ranjana"
+            - Replace "Satyashankar" with "Vijay Shankar"
+            - Replace "O" with "0" and "I" with "1" in numeric fields
+            Step 5: Ensure output is valid JSON only — no explanations, no extra text.
+            
+            Return the result as a JSON array like this:
+            [
+              {
+                "Date": "",
+                "Name": "",
+                "Age": "",
+                "Mobile No": "",
+                "Amount": ""
+              }
+            ]
+            """
 
-        If a value is missing, write 'NA'.
-        Correct common OCR mistakes:
-        'Sanjana' → 'Ranjana'
-        'Satyashankar' → 'Vijay Shankar'
-        Output only valid JSON.
-        """
 
         # Gemini Vision API call
         response = model.generate_content([prompt, image])
